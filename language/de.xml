@@ -70,8 +70,8 @@
 			<item name="wcf.search.object.dev.tkirch.wsc.faq.question"><![CDATA[FAQ]]></item>
 		</category>
 		<category name="wcf.acp.rebuildData">
-			<item name="wcf.acp.rebuildData.dev.tkirch.wsc.faq.question.search.index"><![CDATA[Suchindex für FAQ aktualisieren]]></item>
-			<item name="wcf.acp.rebuildData.dev.tkirch.wsc.faq.question.search.index.description"><![CDATA[Aktualisiert den Suchindex für FAQ-Fragen]]></item>
+			<item name="wcf.acp.rebuildData.wcf_system_worker_FaqQuestionSearchIndexRebuildDataWorker"><![CDATA[Suchindex für FAQ aktualisieren]]></item>
+			<item name="wcf.acp.rebuildData.wcf_system_worker_FaqQuestionSearchIndexRebuildDataWorker.description"><![CDATA[Aktualisiert den Suchindex für FAQ-Fragen]]></item>
 		</category>
 		<category name="wcf.acp.option">
 			<item name="wcf.acp.option.category.cms.faq"><![CDATA[FAQ]]></item>
