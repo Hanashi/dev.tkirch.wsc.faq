@@ -80,5 +80,8 @@
 		<category name="wcf.acp.faqQuestion">
 			<item name="wcf.acp.faqQuestion.copy"><![CDATA[Antwort kopieren]]></item>
 		</category>
+		<category name="wcf.acp.box">
+			<item name="wcf.acp.box.boxController.dev.tkirch.wsc.faq.faqCategories"><![CDATA[FAQ-Kategorien]]></item>
+		</category>
 	</import>
 </language>
