@@ -13,6 +13,7 @@ use wcf\system\category\CategoryPermissionHandler;
 use wcf\system\request\LinkHandler;
 use wcf\system\style\FontAwesomeIcon;
 use wcf\system\WCF;
+use wcf\util\StringUtil;
 
 /**
  * @method      FaqCategory[]    getChildCategories()
@@ -86,13 +87,27 @@ final class FaqCategory extends AbstractDecoratedCategory implements IAccessible
         ]);
     }
 
-    public function getIcon(int $size = 24): string
+    public function getDescription(): string
+    {
+        return WCF::getLanguage()->get($this->description);
+    }
+
+    public function getDescriptionHtml(): string
+    {
+        return $this->descriptionUseHtml ? $this->getDescription() : StringUtil::encodeHTML($this->getDescription());
+    }
+
+    public function getIcon(int $size = 24, bool $defaultIcon = false): string
     {
         if (
             isset($this->additionalData['faqIcon'])
             && FontAwesomeIcon::isValidString($this->additionalData['faqIcon'])
         ) {
             return FontAwesomeIcon::fromString($this->additionalData['faqIcon'])->toHtml($size);
+        }
+
+        if ($defaultIcon) {
+            return FontAwesomeIcon::fromString('circle-question;false')->toHtml($size);
         }
 
         return '';

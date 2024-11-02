@@ -18,6 +18,10 @@
 
 {include file='header' contentHeader=$__contentHeader}
 
-{unsafe:$form->getHtml()}
+{if $categories|count}
+	{unsafe:$form->getHtml()}
+{else}
+	<woltlab-core-notice type="error">{lang}wcf.acp.faq.question.error.noCategory{/lang}</woltlab-core-notice>
+{/if}
 
 {include file='footer'}

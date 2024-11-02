@@ -14,7 +14,7 @@ final class FaqCategoryType extends AbstractCategoryType
     /**
      * @inheritDoc
      */
-    protected $hasDescription = false;
+    protected $hasDescription = true;
 
     /**
      * @inheritDoc
@@ -42,7 +42,14 @@ final class FaqCategoryType extends AbstractCategoryType
     protected function init()
     {
         $this->maximumNestingLevel = SIMPLE_FAQ_VIEW === 'gallery' ? 0 : 1;
+        $this->hasDescription = SIMPLE_FAQ_VIEW === 'gallery' ? false : true;
 
         parent::init();
+    }
+
+    #[Override]
+    public function supportsHtmlDescription()
+    {
+        return SIMPLE_FAQ_VIEW === 'gallery' ? false : true;
     }
 }

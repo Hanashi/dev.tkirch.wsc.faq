@@ -2,7 +2,10 @@
 
 namespace wcf\data\faq;
 
+use Override;
 use wcf\data\DatabaseObjectEditor;
+use wcf\data\IEditableCachedObject;
+use wcf\system\cache\builder\FaqQuestionListCacheBuilder;
 use wcf\system\WCF;
 
 /**
@@ -10,12 +13,18 @@ use wcf\system\WCF;
  * @method      Question     getDecoratedObject()
  * @mixin       Question
  */
-final class QuestionEditor extends DatabaseObjectEditor
+final class QuestionEditor extends DatabaseObjectEditor implements IEditableCachedObject
 {
     /**
      * @inheritDoc
      */
     protected static $baseClass = Question::class;
+
+    #[Override]
+    public static function resetCache()
+    {
+        FaqQuestionListCacheBuilder::getInstance()->reset();
+    }
 
     /**
      * Returns the new show order for a object

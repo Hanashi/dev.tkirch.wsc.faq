@@ -4,10 +4,11 @@ namespace wcf\page;
 
 use CuyZ\Valinor\Mapper\MappingError;
 use Override;
+use wcf\data\attachment\GroupedAttachmentList;
 use wcf\data\faq\category\FaqCategory;
 use wcf\data\faq\category\FaqCategoryNodeTree;
-use wcf\data\faq\QuestionList;
 use wcf\http\Helper;
+use wcf\system\cache\builder\FaqQuestionListCacheBuilder;
 use wcf\system\exception\IllegalLinkException;
 use wcf\system\message\embedded\object\MessageEmbeddedObjectManager;
 use wcf\system\WCF;
@@ -18,6 +19,8 @@ class FaqQuestionListPage extends AbstractPage
      * @inheritDoc
      */
     public $neededPermissions = ['user.faq.canViewFAQ'];
+
+    protected array $faqs = [];
 
     protected int $showFaqAddDialog = 0;
 
@@ -49,14 +52,15 @@ class FaqQuestionListPage extends AbstractPage
     }
 
     #[Override]
-    public function assignVariables()
+    public function readData()
     {
-        parent::assignVariables();
+        parent::readData();
 
         //get categories
-        $faqs = [];
         $embedObjectIDs = [];
         $categoryTree = new FaqCategoryNodeTree('dev.tkirch.wsc.faq.category');
+        [$questionList, $questionIDs] = FaqQuestionListCacheBuilder::getInstance()->getData();
+        $attachmentList = $this->getAttachmentList($questionIDs);
         foreach ($categoryTree->getIterator() as $category) {
             if (!$category->isAccessible()) {
                 continue;
@@ -69,23 +73,14 @@ class FaqQuestionListPage extends AbstractPage
                 continue;
             }
 
-            $questionList = new QuestionList();
-            $questionList->getConditionBuilder()->add('categoryID = ?', [$category->categoryID]);
-            $questionList->readObjects();
-
-            if (!\count($questionList)) {
-                continue;
-            }
-
             $faq = [
-                'id' => $category->categoryID,
-                'title' => WCF::getLanguage()->get($category->title),
-                'attachments' => $questionList->getAttachmentList(),
-                'icon24' => $category->getIcon(24),
-                'icon64' => $category->getIcon(64),
+                'category' => $category,
+                'attachments' => $attachmentList,
+                'questions' => [],
             ];
 
-            foreach ($questionList->getObjects() as $question) {
+            $questions = $questionList[$category->categoryID] ?? [];
+            foreach ($questions as $question) {
                 if ($question->isAccessible()) {
                     $faq['questions'][] = $question;
                     if ($question->hasEmbeddedObjects) {
@@ -95,22 +90,41 @@ class FaqQuestionListPage extends AbstractPage
             }
 
             if ($category->getParentNode() && $category->getParentNode()->categoryID) {
-                $faqs[$category->getParentNode()->categoryID]['sub'][$category->categoryID] = $faq;
+                $this->faqs[$category->getParentNode()->categoryID]['sub'][$category->categoryID] = $faq;
             } else {
-                $faqs[$category->categoryID] = $faq;
+                $this->faqs[$category->categoryID] = $faq;
             }
         }
 
-        if (\count($embedObjectIDs)) {
+        if ($embedObjectIDs !== []) {
             MessageEmbeddedObjectManager::getInstance()->loadObjects(
                 'dev.tkirch.wsc.faq.question',
                 $embedObjectIDs
             );
         }
+    }
+
+    #[Override]
+    public function assignVariables()
+    {
+        parent::assignVariables();
 
         WCF::getTPL()->assign([
-            'faqs' => $faqs,
+            'faqs' => $this->faqs,
             'showFaqAddDialog' => $this->showFaqAddDialog,
         ]);
+    }
+
+    protected function getAttachmentList(array $questionIDs): array|GroupedAttachmentList
+    {
+        if ($questionIDs === []) {
+            return [];
+        }
+
+        $attachmentList = new GroupedAttachmentList('dev.tkirch.wsc.faq.question');
+        $attachmentList->getConditionBuilder()->add('attachment.objectID IN (?)', [$questionIDs]);
+        $attachmentList->readObjects();
+
+        return $attachmentList;
     }
 }
