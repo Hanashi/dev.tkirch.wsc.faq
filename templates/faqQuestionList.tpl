@@ -23,13 +23,9 @@
 		<div class="faqGallery">
 			{foreach from=$faqs item=faq}
 				{if ($faq['questions']|isset && $faq['questions']|count)}
-					<button type="button" class="button galleryButton" data-id="{$faq['id']}">
-						{if $faq['icon64'] === ''}
-							{icon name='circle-question' size=64}
-						{else}
-							{unsafe:$faq['icon64']}
-						{/if}
-						{$faq['title']}
+					<button type="button" class="button galleryButton" data-id="{$faq['category']->categoryID}">
+						{unsafe:$faq['category']->getIcon(64, true)}
+						{$faq['category']->getTitle()}
 					</button>
 				{/if}
 			{/foreach}
@@ -46,8 +42,8 @@
 			{if ($faq['questions']|isset && $faq['questions']|count)}
 				{assign var='attachmentList' value=$faq['attachments']}
 
-				<div id="faqSection{$faq['id']}" class="section faqGallerySection jsObjectActionContainer faq" data-object-action-class-name="wcf\data\faq\QuestionAction" style="display: none;">
-					<h2>{unsafe:$faq['icon24']} {$faq['title']}</h2>
+				<div id="faqSection{$faq['category']->categoryID}" class="section faqGallerySection jsObjectActionContainer faq" data-object-action-class-name="wcf\data\faq\QuestionAction" style="display: none;">
+					<h2>{unsafe:$faq['category']->getIcon(24)} {$faq['category']->getTitle()}</h2>
 
 					{if $faq['questions']|isset}
 						{foreach from=$faq['questions'] item=question}
@@ -64,7 +60,10 @@
 					{assign var='attachmentList' value=$faq['attachments']}
 
 					<div class="section faq{if SIMPLE_FAQ_VIEW === 'cleave'} cleaveCategory{/if}">
-						<h2>{unsafe:$faq['icon24']} {$faq['title']}</h2>
+						<header class="sectionHeader">
+							<h2 class="sectionTitle">{unsafe:$faq['category']->getIcon(24)} {$faq['category']->getTitle()}</h2>
+							<p class="sectionDescription">{unsafe:$faq['category']->getDescriptionHtml()}</p>
+						</header>
 
 						{if $faq['questions']|isset}
 							{foreach from=$faq['questions'] item=question}
@@ -78,7 +77,10 @@
 									{assign var='attachmentList' value=$sub['attachments']}
 
 									<div class="sub">
-										<h2>{$sub['title']}</h2>
+										<header class="sectionHeader">
+											<h2 class="sectionTitle">{unsafe:$sub['category']->getIcon(24)} {$sub['category']->getTitle()}</h2>
+											<p class="sectionDescription">{unsafe:$sub['category']->getDescriptionHtml()}</p>
+										</header>
 
 										{foreach from=$sub['questions'] item=question}
 											{include file='__faqQuestionListEntry'}
