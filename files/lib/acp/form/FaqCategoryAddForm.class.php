@@ -39,8 +39,6 @@ class FaqCategoryAddForm extends CategoryAddFormBuilderForm
     #[Override]
     protected function finalizeForm()
     {
-        parent::finalizeForm();
-
         $this->form->getDataHandler()->addProcessor(
             new CustomFormDataProcessor(
                 'icon',
@@ -59,5 +57,7 @@ class FaqCategoryAddForm extends CategoryAddFormBuilderForm
                 }
             )
         );
+
+        parent::finalizeForm();
     }
 }
