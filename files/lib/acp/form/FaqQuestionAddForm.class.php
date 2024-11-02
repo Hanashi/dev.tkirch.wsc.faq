@@ -11,7 +11,6 @@ use wcf\data\faq\QuestionEditor;
 use wcf\data\IStorableObject;
 use wcf\data\language\item\LanguageItemList;
 use wcf\form\AbstractFormBuilderForm;
-use wcf\system\exception\NamedUserException;
 use wcf\system\form\builder\container\FormContainer;
 use wcf\system\form\builder\container\TabFormContainer;
 use wcf\system\form\builder\container\TabMenuFormContainer;
@@ -60,6 +59,8 @@ class FaqQuestionAddForm extends AbstractFormBuilderForm
 
     protected array $multiLingualAnswers = [];
 
+    protected array $categories;
+
     #[Override]
     public function readParameters()
     {
@@ -102,31 +103,6 @@ class FaqQuestionAddForm extends AbstractFormBuilderForm
     {
         parent::createForm();
 
-        $categoryTree = new FaqCategoryNodeTree('dev.tkirch.wsc.faq.category');
-        $categoryTree->setMaxDepth(0);
-        $categoryList = $categoryTree->getIterator();
-
-        $categories = [];
-        foreach ($categoryList as $category) {
-            $categories[$category->categoryID] = $category;
-
-            $childCategories = $category->getAllChildCategories();
-            if (!\count($childCategories)) {
-                continue;
-            }
-
-            foreach ($childCategories as $childCategory) {
-                $childCategory->setPrefix();
-                $categories[$childCategory->categoryID] = $childCategory;
-            }
-        }
-
-        if (!\count($categories)) {
-            throw new NamedUserException(
-                WCF::getLanguage()->getDynamicVariable('wcf.acp.faq.question.error.noCategory')
-            );
-        }
-
         $tabContent = [];
         if ($this->isMultilingual) {
             foreach ($this->availableLanguages as $language) {
@@ -148,7 +124,7 @@ class FaqQuestionAddForm extends AbstractFormBuilderForm
                 ->appendChildren([
                     SingleSelectionFormField::create('categoryID')
                         ->label('wcf.acp.faq.category')
-                        ->options($categories)
+                        ->options($this->getCategories())
                         ->required(),
                     TextFormField::create('question')
                         ->label('wcf.acp.faq.question.question')
@@ -238,5 +214,41 @@ class FaqQuestionAddForm extends AbstractFormBuilderForm
         }
 
         $this->form->action(LinkHandler::getInstance()->getControllerLink(static::class, $parameters));
+    }
+
+    #[Override]
+    public function assignVariables()
+    {
+        parent::assignVariables();
+
+        WCF::getTPL()->assign([
+            'categories' => $this->getCategories(),
+        ]);
+    }
+
+    protected function getCategories(): array
+    {
+        if (!isset($this->categories)) {
+            $categoryTree = new FaqCategoryNodeTree('dev.tkirch.wsc.faq.category');
+            $categoryTree->setMaxDepth(0);
+            $categoryList = $categoryTree->getIterator();
+
+            $this->categories = [];
+            foreach ($categoryList as $category) {
+                $this->categories[$category->categoryID] = $category;
+
+                $childCategories = $category->getAllChildCategories();
+                if (!\count($childCategories)) {
+                    continue;
+                }
+
+                foreach ($childCategories as $childCategory) {
+                    $childCategory->setPrefix();
+                    $this->categories[$childCategory->categoryID] = $childCategory;
+                }
+            }
+        }
+
+        return $this->categories;
     }
 }

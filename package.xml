@@ -6,8 +6,8 @@
 		<packagename language="de">Simple FAQ</packagename>
 		<packagedescription>A simple and powerful FAQ for your WSC.</packagedescription>
 		<packagedescription language="de">Ein simples und leistungsstarkes FAQ für Ihr WSC.</packagedescription>
-		<version>2.2.4</version>
-		<date>2024-10-29</date>
+		<version>2.2.5</version>
+		<date>2024-11-03</date>
 	</packageinformation>
 	<authorinformation>
 		<author>Hanashi Development, Titus Kirch</author>
@@ -36,8 +36,10 @@
 		<instruction type="templateListener"/>
 		<instruction type="database" run="standalone">acp/database/install_dev.tkirch.wsc.faq.php</instruction>
 	</instructions>
-	<instructions type="update" fromversion="2.2.3">
-		<instruction type="language"/>
+	<instructions type="update" fromversion="2.2.4">
+		<instruction type="file"/>
+		<instruction type="acpTemplate"/>
+		<instruction type="template"/>
 	</instructions>
 	<instructions type="update" fromversion="2.1.*">
 		<instruction type="file"/>
