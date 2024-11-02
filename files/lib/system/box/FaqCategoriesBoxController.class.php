@@ -46,6 +46,9 @@ final class FaqCategoriesBoxController extends AbstractCategoriesBoxController
     #[Override]
     public function hasContent()
     {
-        return SIMPLE_FAQ_VIEW !== 'gallery';
+        $categoryTree = $this->getNodeTree();
+        $categoryList = $categoryTree->getIterator();
+
+        return SIMPLE_FAQ_VIEW !== 'gallery' && \iterator_count($categoryList);
     }
 }
