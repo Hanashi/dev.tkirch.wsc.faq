@@ -73,16 +73,13 @@ class FaqQuestionListPage extends AbstractPage
             $questionList->getConditionBuilder()->add('categoryID = ?', [$category->categoryID]);
             $questionList->readObjects();
 
-            if (!\count($questionList)) {
-                continue;
-            }
-
             $faq = [
                 'id' => $category->categoryID,
                 'title' => WCF::getLanguage()->get($category->title),
-                'attachments' => $questionList->getAttachmentList(),
+                'attachments' => count($questionList) ? $questionList->getAttachmentList() : [],
                 'icon24' => $category->getIcon(24),
                 'icon64' => $category->getIcon(64),
+                'questions' => [],
             ];
 
             foreach ($questionList->getObjects() as $question) {
