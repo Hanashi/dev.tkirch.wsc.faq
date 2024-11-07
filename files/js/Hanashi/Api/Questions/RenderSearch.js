@@ -3,7 +3,7 @@ define(["require", "exports", "WoltLabSuite/Core/Ajax/Backend", "WoltLabSuite/Co
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.renderSearch = renderSearch;
     async function renderSearch() {
-        const url = new URL(`${window.WSC_API_URL}index.php?api/rpc/hanashi/questions/search/render`);
+        const url = new URL(`${window.WSC_RPC_API_URL}hanashi/questions/search/render`);
         let response;
         try {
             response = (await (0, Backend_1.prepareRequest)(url).get().fetchAsJson());

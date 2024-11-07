@@ -6,7 +6,7 @@ type Response = {
 };
 
 export async function renderSearch(): Promise<ApiResult<Response>> {
-  const url = new URL(`${window.WSC_API_URL}index.php?api/rpc/hanashi/questions/search/render`);
+  const url = new URL(`${window.WSC_RPC_API_URL}hanashi/questions/search/render`);
 
   let response: Response;
   try {

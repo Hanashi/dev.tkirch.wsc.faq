@@ -3,7 +3,7 @@ define(["require", "exports", "WoltLabSuite/Core/Ajax/Backend", "WoltLabSuite/Co
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.searchQuestions = searchQuestions;
     async function searchQuestions(query) {
-        const url = new URL(`${window.WSC_API_URL}index.php?api/rpc/hanashi/questions/search`);
+        const url = new URL(`${window.WSC_RPC_API_URL}hanashi/questions/search`);
         url.searchParams.set("query", query);
         let response;
         try {
