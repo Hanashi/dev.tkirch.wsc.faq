@@ -89,7 +89,7 @@ final class FaqCategory extends AbstractDecoratedCategory implements IAccessible
 
     public function getDescription(): string
     {
-        return WCF::getLanguage()->get($this->description);
+        return WCF::getLanguage()->get($this->description ?? '');
     }
 
     public function getDescriptionHtml(): string
