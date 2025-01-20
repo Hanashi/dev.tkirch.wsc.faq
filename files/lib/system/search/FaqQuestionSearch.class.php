@@ -28,7 +28,11 @@ final class FaqQuestionSearch extends AbstractSearchProvider
     #[Override]
     public function getObject(int $objectID): ?ISearchResultObject
     {
-        return $this->faqCache[$objectID];
+        if (isset($this->faqCache[$objectID])) {
+            return $this->faqCache[$objectID];
+        }
+
+        return null;
     }
 
     #[Override]
